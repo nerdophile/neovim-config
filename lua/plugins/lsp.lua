@@ -12,12 +12,51 @@ return {
       require("mason").setup()
       require("mason-lspconfig").setup({
         ensure_installed = { 
-          "lua_ls", "tsserver", "pyright", 
-          "rust_analyzer", "gopls" 
+          "lua_ls", "tsserver", "pyright"
+          -- REMOVED: "rust_analyzer", "gopls" - handled by specialized plugins
         },
         automatic_installation = true,
+        handlers = {
+          -- Default handler for most servers
+          function(server_name)
+            -- Skip servers handled by specialized plugins
+            if server_name == "rust_analyzer" or server_name == "gopls" then
+              return
+            end
+            require("lspconfig")[server_name].setup({})
+          end,
+          
+          -- Explicitly disable rust_analyzer - rustaceanvim handles it
+          ["rust_analyzer"] = function() end,
+          
+          -- Explicitly disable gopls - go.nvim handles it  
+          ["gopls"] = function() end,
+          
+          -- Custom setup for specific servers
+          ["lua_ls"] = function()
+            require("lspconfig").lua_ls.setup({
+              settings = {
+                Lua = {
+                  diagnostics = { globals = { "vim" } },
+                  workspace = {
+                    library = vim.api.nvim_get_runtime_file("", true),
+                  },
+                  telemetry = { enable = false },
+                },
+              },
+            })
+          end,
+          
+          ["tsserver"] = function()
+            require("lspconfig").tsserver.setup({})
+          end,
+          
+          ["pyright"] = function()
+            require("lspconfig").pyright.setup({})
+          end,
+        },
       })
-
+      
       -- Configure diagnostics
       vim.diagnostic.config({
         signs = true,
@@ -25,47 +64,10 @@ return {
         update_in_insert = false,
         severity_sort = true,
       })
-
-      local lspconfig = require("lspconfig")
       
-      -- Lua LSP
-      lspconfig.lua_ls.setup({
-        settings = {
-          Lua = {
-            diagnostics = { globals = { "vim" } },
-          },
-        },
-      })
-
-      -- TypeScript/JavaScript LSP
-      lspconfig.tsserver.setup({})
+      -- REMOVED: Manual lspconfig setups for rust_analyzer and gopls
+      -- These are now handled by rustaceanvim and go.nvim respectively
       
-      -- Python LSP
-      lspconfig.pyright.setup({})
-      
-      -- Rust LSP
-      lspconfig.rust_analyzer.setup({
-        settings = {
-          ["rust-analyzer"] = {
-            cargo = { allFeatures = true },
-            checkOnSave = { command = "clippy" },
-          },
-        },
-      })
-
-      -- Go LSP
-      lspconfig.gopls.setup({
-        settings = {
-          gopls = {
-            analyses = {
-              unusedparams = true,
-            },
-            staticcheck = true,
-            gofumpt = true,
-          },
-        },
-      })
-
       -- LSP Key mappings
       vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
       vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Show hover information" })

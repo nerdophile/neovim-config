@@ -1,3 +1,5 @@
+---@diagnostic disable-next-line: undefined-global
+local vim = vim
 -- ~/.config/nvim/init.lua
 vim.g.mapleader = " "
 
