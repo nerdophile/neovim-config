@@ -17,9 +17,14 @@ return {
       })
     end,
   },
-  -- Built-in virtual text diagnostics (inline like VS Code Error Lens)
+  -- Diagnostic configuration (separate from LSP setup)
   {
     "neovim/nvim-lspconfig",
+    config = false, -- Don't auto-configure LSP servers
+  },
+  -- Configure diagnostics appearance
+  {
+    "nvim-lua/plenary.nvim", -- Just using this as a dependency for the config
     config = function()
       -- Configure diagnostics to show inline without extra spacing
       vim.diagnostic.config({
@@ -42,7 +47,7 @@ return {
         virtual_lines = false, -- Disable lsp_lines to prevent extra spacing
         underline = true,
         signs = true,
-        update_in_insert = false,
+        update_in_insert = true, -- Show diagnostics while typing
         severity_sort = true,
         float = {
           focusable = false,

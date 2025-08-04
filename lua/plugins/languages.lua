@@ -13,7 +13,25 @@ return {
           hover_actions = { auto_focus = true },
         },
         server = {
+          settings = {
+            ["rust-analyzer"] = {
+              checkOnSave = {
+                command = "clippy",
+                extraArgs = { "--no-deps" }, -- Faster checks
+              },
+              diagnostics = {
+                enable = true,
+                enableExperimental = true,
+                refreshSupport = true,
+              },
+            },
+          },
           on_attach = function(client, bufnr)
+            -- Enable faster diagnostics updates
+            client.server_capabilities.textDocument.diagnostic = {
+              dynamicRegistration = true,
+            }
+            
             vim.keymap.set("n", "<leader>rr", function()
               vim.cmd.RustLsp('runnables')
             end, { desc = "Rust Runnables", buffer = bufnr })
