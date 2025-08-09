@@ -1,33 +1,30 @@
--- ~/.config/nvim/lua/config/keymaps.lua
--- Telescope keymaps
-vim.schedule(function()
-  local ok, builtin = pcall(require, "telescope.builtin")
-  if ok then
-    vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find Files" })
-    vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Live Grep" })
-    vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Find Buffers" })
-    vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Find Help" })
-  end
-end)
+-- lua/config/keymaps.lua - All keybindings
+-- =========================================
 
--- File explorer
-vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "Toggle file explorer" })
+-- Set highlight on search, but clear on pressing <Esc> in normal mode
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Trouble (Error Lens)
-vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>", { desc = "Toggle trouble" })
-vim.keymap.set("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>", { desc = "Workspace diagnostics" })
-vim.keymap.set("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>", { desc = "Document diagnostics" })
+-- Diagnostic keymaps
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- Toggle diagnostic lines
-vim.keymap.set("n", "<leader>l", function()
-  local config = vim.diagnostic.config() or {}
-  if config.virtual_text then
-    vim.diagnostic.config({ virtual_text = false, virtual_lines = true })
-  else
-    vim.diagnostic.config({ virtual_text = true, virtual_lines = false })
-  end
-end, { desc = "Toggle line diagnostics" })
+-- Exit terminal mode in the builtin terminal with a shortcut
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- Basic shortcuts
-vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save file" })
-vim.keymap.set("n", "<leader>q", ":q<CR>", { desc = "Quit" })
+-- Keybinds to make split navigation easier.
+--  Use CTRL+<hjkl> to switch between windows
+vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+-- General utility keymaps
+vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = '[W]rite file' })
+
+-- TIP: Disable arrow keys in normal mode (uncomment if desired)
+-- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+-- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+-- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+-- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
