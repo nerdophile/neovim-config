@@ -1,84 +1,42 @@
--- ~/.config/nvim/lua/plugins/languages.lua
+-- lua/plugins/languages.lua - Rust & Go specific tools
+-- ====================================================
+
 return {
-  -- Rust tools
+  -- Go tools
   {
-    "mrcjkb/rustaceanvim",
-    version = "^4",
-    lazy = false, -- Important: don't lazy load
-    priority = 1000, -- Load before other LSP plugins
-    ft = { "rust" },
-    config = function()
-      vim.g.rustaceanvim = {
-        tools = {
-          hover_actions = { auto_focus = true },
-        },
-        server = {
-          settings = {
-            ["rust-analyzer"] = {
-              checkOnSave = {
-                command = "clippy",
-                extraArgs = { "--no-deps" }, -- Faster checks
-              },
-              diagnostics = {
-                enable = true,
-                enableExperimental = true,
-                refreshSupport = true,
-              },
-            },
-          },
-          on_attach = function(client, bufnr)
-            -- Enable faster diagnostics updates
-            client.server_capabilities.textDocument.diagnostic = {
-              dynamicRegistration = true,
-            }
-            
-            vim.keymap.set("n", "<leader>rr", function()
-              vim.cmd.RustLsp('runnables')
-            end, { desc = "Rust Runnables", buffer = bufnr })
-            
-            vim.keymap.set("n", "<leader>dr", function()
-              vim.cmd.RustLsp('debuggables')
-            end, { desc = "Rust Debuggables", buffer = bufnr })
-            
-            vim.keymap.set("n", "<leader>ra", function()
-              vim.cmd.RustLsp('hover', 'actions')
-            end, { desc = "Rust Hover Actions", buffer = bufnr })
-          end,
-        },
-      }
-    end,
-  },
-  -- Go tools  
-  {
-    "ray-x/go.nvim",
-    dependencies = {
-      "ray-x/guihua.lua",
-      "neovim/nvim-lspconfig",
-      "nvim-treesitter/nvim-treesitter",
+    'ray-x/go.nvim',
+    dependencies = {  -- optional packages
+      'ray-x/guihua.lua',
+      'neovim/nvim-lspconfig',
+      'nvim-treesitter/nvim-treesitter',
     },
     config = function()
-      require("go").setup({
-        goimport = 'gopls',
-        gofmt = 'gopls', 
-        max_line_len = 120,
-        tag_transform = false,
-        test_dir = '',
-        comment_placeholder = '   ',
-        lsp_cfg = true, -- Let go.nvim handle gopls
-        lsp_gofumpt = true,
-        lsp_on_attach = true,
-        dap_debug = true,
-      })
+      require('go').setup()
       
-      -- Go-specific keymaps
-      vim.keymap.set("n", "<leader>gr", ":GoRun<CR>", { desc = "Go Run" })
-      vim.keymap.set("n", "<leader>gt", ":GoTest<CR>", { desc = "Go Test" })
-      vim.keymap.set("n", "<leader>gb", ":GoBuild<CR>", { desc = "Go Build" })
-      vim.keymap.set("n", "<leader>gi", ":GoImport<CR>", { desc = "Go Import" })
-      vim.keymap.set("n", "<leader>gf", ":GoFmt<CR>", { desc = "Go Format" })
+      -- Go keymaps
+      vim.keymap.set('n', '<leader>gr', ':GoRun<CR>', { desc = '[G]o [R]un' })
+      vim.keymap.set('n', '<leader>gt', ':GoTest<CR>', { desc = '[G]o [T]est' })
+      vim.keymap.set('n', '<leader>gb', ':GoBuild<CR>', { desc = '[G]o [B]uild' })
+      vim.keymap.set('n', '<leader>gi', ':GoInstall<CR>', { desc = '[G]o [I]nstall' })
+      vim.keymap.set('n', '<leader>gf', ':GoFmt<CR>', { desc = '[G]o [F]ormat' })
+      vim.keymap.set('n', '<leader>gd', ':GoDoc<CR>', { desc = '[G]o [D]oc' })
     end,
-    event = {"CmdlineEnter"},
-    ft = {"go", 'gomod'},
-    build = ':lua require("go.install").update_all_sync()'
+    event = {'CmdlineEnter'},
+    ft = {'go', 'gomod'},
+    build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
+  },
+
+  -- Rust tools
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^4', -- Recommended
+    lazy = false, -- This plugin is already lazy
+    config = function()
+      -- Rust keymaps
+      vim.keymap.set('n', '<leader>rr', ':RustLsp runnables<CR>', { desc = '[R]ust [R]unnables' })
+      vim.keymap.set('n', '<leader>rt', ':RustLsp testables<CR>', { desc = '[R]ust [T]estables' })
+      vim.keymap.set('n', '<leader>rd', ':RustLsp debuggables<CR>', { desc = '[R]ust [D]ebuggables' })
+      vim.keymap.set('n', '<leader>rc', ':RustLsp openCargo<CR>', { desc = '[R]ust Open [C]argo.toml' })
+    end,
   },
 }
