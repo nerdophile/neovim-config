@@ -99,7 +99,7 @@ node    # For TypeScript/JavaScript
 
 | Key | Description |
 |-----|-------------|
-| `<leader>ff` | Find files |
+| `<leader>p`  | Find files |
 | `<leader>fg` | Live grep (search text) |
 | `<leader>sf` | Search files |
 | `<leader>sg` | Search by grep |
@@ -144,8 +144,8 @@ node    # For TypeScript/JavaScript
 
 | Key | Description |
 |-----|-------------|
-| `<leader>xx` | Toggle trouble (diagnostics) |
-| `<leader>xX` | Buffer diagnostics |
+| `<leader>tt` | Toggle trouble (diagnostics) |
+| `<leader>tT` | Buffer diagnostics |
 | `<leader>xL` | Location list |
 | `<leader>xQ` | Quickfix list |
 | `<leader>l` | Toggle LSP lines (inline diagnostics) |
