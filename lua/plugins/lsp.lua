@@ -184,9 +184,9 @@ return {
 
 				mapping = cmp.mapping.preset.insert({
 					-- Select the [n]ext item
-					["<C-n>"] = cmp.mapping.select_next_item(),
+					["<C-n>"] = cmp.mapping(cmp.mapping.select_next_item(), { "i", "c" }),
 					-- Select the [p]revious item
-					["<C-p>"] = cmp.mapping.select_previous_item(),
+					["<C-p>"] = cmp.mapping(cmp.mapping.select_prev_item(), { "i", "c" }),
 
 					-- Scroll the documentation window [b]ack / [f]orward
 					["<C-b>"] = cmp.mapping.scroll_docs(-4),
@@ -194,9 +194,30 @@ return {
 
 					-- Accept ([y]es) the completion.
 					["<C-y>"] = cmp.mapping.confirm({ select = true }),
+					["<CR>"] = cmp.mapping.confirm({ select = true }),
 
 					-- Manually trigger a completion from nvim-cmp.
-					["<C-Space>"] = cmp.mapping.complete({}),
+					["<C-Space>"] = cmp.mapping.complete(),
+
+					-- Tab/Shift-Tab for completion and snippet navigation
+					["<Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_next_item()
+						elseif luasnip.expand_or_locally_jumpable() then
+							luasnip.expand_or_jump()
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+					["<S-Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_prev_item()
+						elseif luasnip.locally_jumpable(-1) then
+							luasnip.jump(-1)
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
 
 					-- Think of <c-l> as moving to the right of your snippet expansion.
 					["<C-l>"] = cmp.mapping(function()
